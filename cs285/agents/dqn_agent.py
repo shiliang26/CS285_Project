@@ -89,7 +89,6 @@ class DQNAgent(object):
         elif env == 2 and self.replay_buffer_2.can_sample(self.batch_size):
             return self.replay_buffer_2.sample(batch_size)
         else:
-            print("returning empty")
             return [],[],[],[],[]
 
 
