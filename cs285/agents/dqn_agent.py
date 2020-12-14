@@ -6,7 +6,7 @@ from cs285.critics.dqn_critic import DQNCritic
 
 
 class DQNAgent(object):
-    def __init__(self, env, env2, agent_params):
+    def __init__(self, env, env_2, agent_params):
 
         self.env = env
         self.env_2 = env_2
