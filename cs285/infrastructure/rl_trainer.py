@@ -174,9 +174,9 @@ class RL_Trainer(object):
                 print("\nTraining agent...")
 
             self.agent.switch_environment(1)
-            all_logs = self.train_agent(self.env)
+            all_logs = self.train_agent(1)
             self.agent.switch_environment(2)
-            all_logs_2 = self.train_agent(self.env2)
+            all_logs_2 = self.train_agent(2)
             self.agent.t += 1
 
             if itr % self.params['model_log_freq'] == 0:
