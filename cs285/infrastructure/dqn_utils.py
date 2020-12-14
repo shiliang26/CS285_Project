@@ -102,7 +102,51 @@ class PreprocessAtari(nn.Module):
         x = x.permute(0, 3, 1, 2).contiguous()
         return x / 255.
 
+class atari_q_network(nn.Module):
+    def __init__(self, num_actions):
+        super().__init__()
+        self.preprocess = PreprocessAtari()
+        self.conv1 = nn.Conv2d(in_channels=4, out_channels=32, kernel_size=8, stride=4)
+        self.conv2 = nn.Conv2d(in_channels=32, out_channels=64, kernel_size=4, stride=2)
+        self.conv3 = nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, stride=1)
+        self.flatten = Flatten()
+        self.linear = nn.Linear(3136, 512)          # Input is supposed to be H=W=84
+        self.fc1 = nn.Linear(512, num_actions[0])
+        self.fc2 = nn.Linear(512, num_actions[1])
+        self.relu = nn.ReLU()
 
+    def forward(self, x, env):      # env = 'MsPacman-v0' or env = 'Alien-v0'
+        x = self.preprocess(x)
+        x = self.conv1(x)
+        x = self.relu(x)
+        x = self.conv2(x)
+        x = self.relu(x)
+        x = self.conv3(x)
+        x = self.relu(x)
+        x = self.flatten(x)
+        x = self.linear(x)
+        x = self.relu(x)
+        if env == 'Alien-v0':
+            x = self.fc2(x)
+        else:
+            x = self.fc1(x)
+
+        return x
+
+    def load(self, path):
+        state_dict = torch.load(path)
+        self.load_state_dict(state_dict)
+
+    def save(self, path):
+        torch.save(self, path)
+
+
+def create_atari_q_network(ob_dim, num_actions):
+
+    q_net = atari_q_network(num_actions)
+    return q_net
+
+'''
 def create_atari_q_network(ob_dim, num_actions):
     return nn.Sequential(
         PreprocessAtari(),
@@ -117,6 +161,8 @@ def create_atari_q_network(ob_dim, num_actions):
         nn.ReLU(),
         nn.Linear(512, num_actions),
     )
+'''
+
 
 def atari_exploration_schedule(num_timesteps):
     return PiecewiseSchedule(

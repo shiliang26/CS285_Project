@@ -28,6 +28,12 @@ class DQNCritic(BaseCritic):
         network_initializer = hparams['q_func']
         self.q_net = network_initializer(self.ob_dim, self.ac_dim)
         self.q_net_target = network_initializer(self.ob_dim, self.ac_dim)
+        self.pretrained = hparams['pretrained']
+
+        if self.pretrained is not None:
+            self.q_net.load('multi.tar')
+            self.q_net_target.load('multi.tar')
+
         self.optimizer = self.optimizer_spec.constructor(
             self.q_net.parameters(),
             **self.optimizer_spec.optim_kwargs

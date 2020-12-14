@@ -184,6 +184,9 @@ class RL_Trainer(object):
                 print("\nTraining agent...")
             all_logs = self.train_agent()
 
+            if itr % self.params['model_log_freq'] == 0:
+                self.agent.critic.q_net.save(self.params['env_name'] + '_' + str(itr) + '_model.tar')
+
             # log/save
             if self.logvideo or self.logmetrics:
                 # perform logging
