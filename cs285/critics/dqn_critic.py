@@ -30,7 +30,7 @@ class DQNCritic(BaseCritic):
         self.q_net_target = network_initializer(self.ob_dim, self.ac_dim)
         self.pretrained = hparams['pretrained']
 
-        if self.pretrained is not None:
+        if self.pretrained:
             self.q_net.load('multi.tar')
             self.q_net_target.load('multi.tar')
 
