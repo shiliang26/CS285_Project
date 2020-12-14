@@ -115,7 +115,7 @@ class atari_q_network(nn.Module):
         self.fc2 = nn.Linear(512, num_actions[1])
         self.relu = nn.ReLU()
 
-    def forward(self, x, env):      # env = 'MsPacman-v0' or env = 'Alien-v0'
+    def forward(self, x, env='MsPacman-v0'):      # env = 'MsPacman-v0' or env = 'Alien-v0'
         x = self.preprocess(x)
         x = self.conv1(x)
         x = self.relu(x)
