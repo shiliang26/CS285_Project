@@ -15,7 +15,7 @@ class DQNAgent(object):
         self.last_obs = self.env.reset()
         self.pretrained = agent_params['pretrained']
 
-        self.num_actions = agent_params['ac_dim']
+        self.num_actions = [agent_params['ac_dim'][0], agent_params['ac_dim'][1]]
         self.learning_starts = agent_params['learning_starts']
         self.learning_freq = agent_params['learning_freq']
         self.target_update_freq = agent_params['target_update_freq']
@@ -27,9 +27,10 @@ class DQNAgent(object):
         self.critic = DQNCritic(agent_params, self.optimizer_spec)
         self.actor = ArgMaxPolicy(self.critic)
 
-        lander = agent_params['env_name'].startswith('LunarLander')
-        self.replay_buffer = MemoryOptimizedReplayBuffer(
-            agent_params['replay_buffer_size'], agent_params['frame_history_len'], lander=lander)
+        self.replay_buffer_1 = MemoryOptimizedReplayBuffer(
+            agent_params['replay_buffer_size'], agent_params['frame_history_len'])
+        self.replay_buffer_2 = MemoryOptimizedReplayBuffer(
+            agent_params['replay_buffer_size'], agent_params['frame_history_len'])
         self.t = 0
         self.num_param_updates = 0
 

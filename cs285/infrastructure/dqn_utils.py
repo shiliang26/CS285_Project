@@ -111,8 +111,8 @@ class atari_q_network(nn.Module):
         self.conv3 = nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, stride=1)
         self.flatten = Flatten()
         self.linear = nn.Linear(3136, 512)          # Input is supposed to be H=W=84
-        self.fc1 = nn.Linear(512, num_actions[0])
-        self.fc2 = nn.Linear(512, num_actions[1])
+        self.fc1 = nn.Linear(512, 9)
+        self.fc2 = nn.Linear(512, 18)
         self.relu = nn.ReLU()
 
     def forward(self, x, env='MsPacman-v0'):      # env = 'MsPacman-v0' or env = 'Alien-v0'
@@ -383,7 +383,7 @@ def get_wrapper_by_name(env, classname):
             raise ValueError("Couldn't find wrapper named %s"%classname)
 
 class MemoryOptimizedReplayBuffer(object):
-    def __init__(self, size, frame_history_len, lander=False):
+    def __init__(self, size, frame_history_len):
         """This is a memory efficient implementation of the replay buffer.
 
         The sepecific memory optimizations use here are:
@@ -409,7 +409,6 @@ class MemoryOptimizedReplayBuffer(object):
         frame_history_len: int
             Number of memories to be retried for each observation.
         """
-        self.lander = lander
 
         self.size = size
         self.frame_history_len = frame_history_len
@@ -528,7 +527,7 @@ class MemoryOptimizedReplayBuffer(object):
             Index at which the frame is stored. To be used for `store_effect` later.
         """
         if self.obs is None:
-            self.obs      = np.empty([self.size] + list(frame.shape), dtype=np.float32 if self.lander else np.uint8)
+            self.obs      = np.empty([self.size] + list(frame.shape), dtype=np.uint8)
             self.action   = np.empty([self.size],                     dtype=np.int32)
             self.reward   = np.empty([self.size],                     dtype=np.float32)
             self.done     = np.empty([self.size],                     dtype=np.bool)
