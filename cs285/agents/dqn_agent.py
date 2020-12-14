@@ -13,6 +13,7 @@ class DQNAgent(object):
         self.batch_size = agent_params['batch_size']
         # import ipdb; ipdb.set_trace()
         self.last_obs = self.env.reset()
+        self.pretrained = agent_params['pretrained']
 
         self.num_actions = agent_params['ac_dim']
         self.learning_starts = agent_params['learning_starts']
@@ -51,7 +52,7 @@ class DQNAgent(object):
         eps = self.exploration.value(self.t)
 
         # TODO use epsilon greedy exploration when selecting action
-        perform_random_action = np.random.random() < eps or self.t < self.learning_starts
+        perform_random_action = np.random.random() < eps or (self.t < self.learning_starts and self.pretrained == False)
         if perform_random_action:
             # HINT: take random action 
                 # with probability eps (see np.random.random())
