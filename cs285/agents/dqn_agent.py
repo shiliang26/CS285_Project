@@ -89,6 +89,7 @@ class DQNAgent(object):
         elif env == 2 and self.replay_buffer_2.can_sample(self.batch_size):
             return self.replay_buffer_2.sample(batch_size)
         else:
+            print("returning empty")
             return [],[],[],[],[]
 
 
@@ -107,5 +108,4 @@ class DQNAgent(object):
 
             self.num_param_updates += 1
 
-        self.t += 1
         return log

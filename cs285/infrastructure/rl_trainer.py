@@ -177,6 +177,7 @@ class RL_Trainer(object):
             all_logs = self.train_agent(self.env)
             self.agent.switch_environment(2)
             all_logs_2 = self.train_agent(self.env2)
+            self.agent.t += 1
 
             if itr % self.params['model_log_freq'] == 0:
                 self.agent.critic.q_net.save(self.params['env_name'] + '_' + str(itr) + '_model.tar')
