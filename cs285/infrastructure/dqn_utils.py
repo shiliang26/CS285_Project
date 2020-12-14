@@ -115,7 +115,9 @@ class atari_q_network(nn.Module):
         self.fc2 = nn.Linear(512, 18)
         self.relu = nn.ReLU()
 
-    def forward(self, x, env='MsPacman-v0'):      # env = 'MsPacman-v0' or env = 'Alien-v0'
+        self.head = 1
+
+    def forward(self, x):      # env = 'MsPacman-v0' or env = 'Alien-v0'
         x = self.preprocess(x)
         x = self.conv1(x)
         x = self.relu(x)
@@ -126,7 +128,7 @@ class atari_q_network(nn.Module):
         x = self.flatten(x)
         x = self.linear(x)
         x = self.relu(x)
-        if env == 'Alien-v0':
+        if self.head == 2:
             x = self.fc2(x)
         else:
             x = self.fc1(x)
@@ -138,7 +140,7 @@ class atari_q_network(nn.Module):
         self.load_state_dict(state_dict)
 
     def save(self, path):
-        torch.save(self, path)
+        torch.save(self.state_dict(), path)
 
 
 def create_atari_q_network(ob_dim, num_actions):
