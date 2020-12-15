@@ -108,3 +108,15 @@ class DQNAgent(object):
             self.num_param_updates += 1
 
         return log
+
+    def train_distill(self, ob_no, env_num):
+        log = {}
+        if (self.t > self.learning_starts
+                and self.t % self.learning_freq == 0
+                and self.replay_buffer.can_sample(self.batch_size)
+                and self.replay_buffer_2.can_sample(self.batch_size)
+        ):
+
+            log = self.critic.distill(ob_no, env_num)
+
+        return log

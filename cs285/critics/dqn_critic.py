@@ -3,6 +3,7 @@ import torch
 import torch.optim as optim
 from torch.nn import utils
 from torch import nn
+import torch.nn.functional as F
 
 from cs285.infrastructure import pytorch_util as ptu
 
@@ -23,6 +24,7 @@ class DQNCritic(BaseCritic):
         self.double_q = hparams['double_q']
         self.grad_norm_clipping = hparams['grad_norm_clipping']
         self.gamma = hparams['gamma']
+        self.tau = 0.01            # This is for distillation
 
         self.optimizer_spec = optimizer_spec
         network_initializer = hparams['q_func']
@@ -33,6 +35,12 @@ class DQNCritic(BaseCritic):
         if self.pretrained:
             self.q_net.load('multi.tar')
             self.q_net_target.load('multi.tar')
+
+        if self.distill:
+            self.teacher_1 = network_initializer(self.ob_dim, self.ac_dim)
+            self.teacher_2 = network_initializer(self.ob_dim, self.ac_dim)
+            self.teacher_1.load('teacher_pacman.tar')
+            self.teacher_2.load('teacher_alien.tar')
 
         self.optimizer = self.optimizer_spec.constructor(
             self.q_net.parameters(),
@@ -94,4 +102,23 @@ class DQNCritic(BaseCritic):
         return ptu.to_numpy(qa_values)
 
 
-    
+    def distill(self, ob_no, env_num):
+
+        ob_no = ptu.from_numpy(ob_no)
+
+        student = self.q_net(ob_no)
+        if env_num == 1:
+            teacher = self.teacher_1(ob_no)
+        else:
+            teacher = self.teacher_2(ob_no)
+
+        loss = torch.sum(F.softmax(teacher / self.tau) * torch.log(F.softmax(teacher / self.tau) / F.softmax(student)))
+
+        self.optimizer.zero_grad()
+        loss.backward()
+        utils.clip_grad_value_(self.q_net.parameters(), self.grad_norm_clipping)
+        self.optimizer.step()
+
+        return {
+            'Distillation KL Loss': ptu.to_numpy(loss),
+        }
