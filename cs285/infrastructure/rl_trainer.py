@@ -136,7 +136,7 @@ class RL_Trainer(object):
 
         print_period = 1000
 
-        for itr in range(self.hparams['starting_point'], n_iter):
+        for itr in range(self.params['starting_point'], n_iter):
             if itr % print_period == 0:
                 print("\n\n********** Iteration %i ************"%itr)
 
