@@ -30,6 +30,8 @@ class DQNAgent(object):
         self.replay_buffer = MemoryOptimizedReplayBuffer(
             agent_params['replay_buffer_size'], agent_params['frame_history_len'])
         self.t = 0
+        if self.agent_params['pretrained']:
+            self.t = self.agent_params['starting_point']
         self.num_param_updates = 0
 
     def add_to_replay_buffer(self, paths):
