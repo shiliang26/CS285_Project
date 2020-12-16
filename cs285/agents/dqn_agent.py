@@ -19,6 +19,8 @@ class DQNAgent(object):
 
         self.num_actions = agent_params['ac_dim']
         self.learning_starts = agent_params['learning_starts']
+        if self.agent_params['pretrained']:
+            self.learning_starts = 0
         self.learning_freq = agent_params['learning_freq']
         self.target_update_freq = agent_params['target_update_freq']
 
@@ -35,6 +37,8 @@ class DQNAgent(object):
         self.replay_buffer_2 = MemoryOptimizedReplayBuffer(
             agent_params['replay_buffer_size'], agent_params['frame_history_len'])
         self.t = 0
+        if self.agent_params['pretrained']:
+            self.t = self.agent_params['starting_point']
         self.num_param_updates = 0
 
     def add_to_replay_buffer(self, paths):
